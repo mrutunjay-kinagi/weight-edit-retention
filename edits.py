@@ -8,8 +8,9 @@ Two sources of edits:
          Rebuilt from their released edit files and checked against their sha256.
   WSP-S  (Hu et al., arXiv 2611.09382): rebuilt from the formulas in their
          Appendix C. Checked against the "Changed BF16" counts they report.
-Plus one control: a random direction of matched norm in the column the best
-math edit touches.
+Controls: a random direction of matched norm in the column the best math edit
+touches (should do nothing), and five deliberately harmful edits (should lower
+accuracy, to show the test can detect damage).
 """
 import hashlib
 import json
@@ -136,6 +137,53 @@ def ctrl_random(get_bits, embed_f32=None, gamma_f32=None, first_token=None, seed
     return {W(23): f32_to_bits(w)}
 
 
+# ------------------------------------------------- positive (damage) controls
+# Added 18 November 2026, after the main run and before their results were seen.
+# Purpose: show that the test detects damage when damage exists.
+def _p10c_tensors(mit_dir):
+    man = json.load(open(os.path.join(mit_dir, "p10c", "manifest.json")))
+    return [suffix(t["name"]) for t in man["tensors"]]
+
+
+def damage_noise(level, seed=0):
+    """Multiplicative Gaussian noise on the same 30 matrices the broadest published edit touches."""
+    def fn(get_bits, mit_dir=None, **_):
+        rng = np.random.default_rng(seed)
+        out = {}
+        for s in _p10c_tensors(mit_dir):
+            w = bits_to_f32(get_bits(s))
+            out[s] = f32_to_bits(w * (1.0 + level * rng.standard_normal(w.shape, dtype=np.float32)))
+        return out
+    return fn
+
+
+def damage_zero_attn15(get_bits, **_):
+    """All eight heads of layer 15 set to zero (the published edits zero one head)."""
+    return {O(15): f32_to_bits(0 * bits_to_f32(get_bits(O(15))))}
+
+
+DAMAGE_CONTROLS = {
+    "ctrl_damage_noise05": damage_noise(0.05),
+    "ctrl_damage_noise10": damage_noise(0.10),
+    "ctrl_damage_noise20": damage_noise(0.20),
+    "ctrl_damage_noise40": damage_noise(0.40),
+    "ctrl_damage_zero_attn15": damage_zero_attn15,
+    # second noise seed, to see how much the noise controls vary by seed
+    "ctrl_damage_noise10_s1": damage_noise(0.10, seed=1),
+    "ctrl_damage_noise20_s1": damage_noise(0.20, seed=1),
+}
+
+
+def rel_change(edit, get_bits):
+    """Size of an edit: norm of the change divided by norm of the touched tensors."""
+    num = den = 0.0
+    for s, e in edit.items():
+        w = bits_to_f32(get_bits(s)).astype(np.float64)
+        num += float(((bits_to_f32(e) - w) ** 2).sum())
+        den += float((w ** 2).sum())
+    return (num / den) ** 0.5
+
+
 # name -> (builder, changed-BF16 count reported by the authors, or None)
 SPEC_EDITS = {
     "ws_math_primary": (ws_math_primary, 1023),
@@ -161,6 +209,12 @@ def build_all(get_bits, mit_dir, **ctx):
         n = sum(int((e != get_bits(s)).sum()) for s, e in edits[name].items())
         ok = "" if expect is None else (" (matches paper)" if n == expect else f" (PAPER SAYS {expect:,}: CHECK)")
         report.append(f"{name}: {len(edits[name])} tensors, {n:,} values changed{ok}")
+    for name, fn in DAMAGE_CONTROLS.items():
+        edits[name] = fn(get_bits, mit_dir=mit_dir, **ctx)
+        report.append(f"{name}: {len(edits[name])} tensors (damage control)")
+    report.append("relative size of each edit (norm of change / norm of touched tensors):")
+    for name, ed in edits.items():
+        report.append(f"  {name}: {rel_change(ed, get_bits):.4f}")
     a, b = edits["ws_mmlupro"], edits["mit_p25c"]
     same = a.keys() == b.keys() and all((bits_to_f32(a[k]) == bits_to_f32(b[k])).all() for k in a)  # -0.0 == +0.0
     report.append("ws_mmlupro has the same values as mit_p25c: " + ("yes (two groups found the same edit)" if same else "no"))

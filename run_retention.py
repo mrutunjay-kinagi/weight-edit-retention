@@ -9,6 +9,7 @@ random noise.
     python run_retention.py --limit 50      # quick smoke test
     python run_retention.py --all           # all 12,032 test questions (slow)
     python run_retention.py --device cpu    # if the GPU gives errors
+    python run_retention.py --confirm 2000 --skip ws_mmlupro --out results_confirm   # confirmatory run
 
 Outputs: results/<variant>.jsonl, one line per question. Safe to stop and rerun.
 """
@@ -89,6 +90,9 @@ def main():
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
     ap.add_argument("--only", default="", help="comma-separated variant names")
+    ap.add_argument("--skip", default="", help="comma-separated variant names to leave out")
+    ap.add_argument("--confirm", type=int, default=0,
+                    help="score N fresh questions: MMLU-Pro test questions NOT in the 1,000 used before")
     ap.add_argument("--out", default=os.path.join(HERE, "results"))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -131,8 +135,17 @@ def main():
 
     # ---- data
     ds = load_dataset("TIGER-Lab/MMLU-Pro", split="test")
-    if not a.all:
-        keep = set(json.load(open(os.path.join(HERE, "mmlupro_1k_ids.json"))))
+    used = set(json.load(open(os.path.join(HERE, "mmlupro_1k_ids.json"))))
+    if a.confirm:
+        import random
+        fresh = sorted(q for q in ds["question_id"] if q not in used)
+        random.Random(20261118).shuffle(fresh)
+        keep = set(fresh[:a.confirm])
+        json.dump(sorted(keep), open(os.path.join(a.out, "question_ids.json"), "w"))
+        ds = ds.filter(lambda r: r["question_id"] in keep)
+        assert len(ds) == a.confirm and not (keep & used)
+    elif not a.all:
+        keep = used
         ds = ds.filter(lambda r: r["question_id"] in keep)
         assert len(ds) == len(keep), (len(ds), len(keep))
     if a.limit:
@@ -149,6 +162,8 @@ def main():
     variants = ["base"] + list(all_edits)
     if a.only:
         variants = [v for v in variants if v in a.only.split(",")]
+    if a.skip:
+        variants = [v for v in variants if v not in a.skip.split(",")]
     for v in variants:
         path = os.path.join(a.out, v + ".jsonl")
         done = sum(1 for _ in open(path)) if os.path.exists(path) else 0

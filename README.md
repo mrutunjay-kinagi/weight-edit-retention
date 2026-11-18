@@ -3,8 +3,10 @@
 A loop-free test of whether published weight-space programming edits to
 Qwen3.5-0.8B reduce what the model knows.
 
-**Result:** none of the nine edits tested reduced MMLU-Pro accuracy. Every edit
-stayed inside a band of plus or minus 2 points that was fixed before the run.
+**Result so far:** none of the nine edits tested reduced MMLU-Pro accuracy beyond a band of
+plus or minus 2 points fixed before the run. A positive control showed that accuracy is a
+blunt measure here (20% random noise also passes), so a confirmatory run with a sharper,
+pre-registered measure is in progress.
 
 Write-up: _add link_
 
@@ -61,6 +63,27 @@ not released, so they are not included.
 - **Otherwise:** inconclusive.
 - **Control:** `ctrl_random` shows how far a meaningless edit of the same size moves the score.
 - **Validity:** base accuracy clearly above chance, and most probability on valid letters.
+
+## Positive controls
+
+Added on 18 November 2026, after the main run and before their results were
+seen. A "no change" result means little if the test cannot detect damage, so
+five deliberately harmful edits are scored the same way:
+
+- `ctrl_damage_noise05`, `10`, `20`, `40`: multiplicative Gaussian noise of 5%,
+  10%, 20%, and 40% on the same 30 matrices the broadest published edit touches.
+- `ctrl_damage_zero_attn15`: all eight attention heads of layer 15 set to zero
+  (the published edits zero one).
+
+**Prediction written before the run:** accuracy falls as noise rises, and at
+least the 20% and 40% noise controls meet the "damage" rule. If no control
+shows damage, the test is too blunt and the main result says little.
+
+**Outcome (18 November):** the prediction was half right. 40% noise (-7.0 points) and zeroed
+layer-15 attention (-12.3 points) meet the damage rule. 20% noise does not: it changes 36% of
+the answers and leaves accuracy at 24.7%. So accuracy on this test detects large damage and
+misses moderate damage. A sharper measure and a confirmatory run on fresh questions are
+specified in `PREREGISTRATION_confirm.md`.
 
 ## Results
 
@@ -124,6 +147,8 @@ An 8 GB Apple laptop is too slow for this model's reference implementation.
 - `run_retention.py`: loads the model, applies each edit, scores the questions.
 - `analyze.py`: the paired comparison and the verdict rules.
 - `extra_checks.py`: the exploratory observations.
+- `PREREGISTRATION_confirm.md`, `analyze_confirm.py`, `confirm_colab.ipynb`: the confirmatory run.
+- `positive_control_colab.ipynb`: the positive-control run.
 - `mit_edits/`: edit files from the MIT group.
 - `results/`: per-question outputs from the run reported here (Colab T4, 17 November 2026).
 

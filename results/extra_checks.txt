@@ -1,0 +1,17 @@
+questions the base answers correctly with p > 0.5: 79, mean p there 0.684
+edit              letters changed  wrong->other wrong  kept of confident  p(correct) there
+ctrl_damage_noise05              85                  58              1.000             0.677
+ctrl_damage_noise10             173                 120              1.000             0.659
+ctrl_damage_noise20             361                 245              0.949             0.587
+ctrl_damage_noise40             838                 556              0.443             0.308
+ctrl_damage_zero_attn15             705                 446              0.203             0.174
+ctrl_random                    10                   5              1.000             0.683
+mit_p10c                      140                  93              1.000             0.574
+mit_p25c                      129                  92              1.000             0.658
+mit_p50c                       49                  32              1.000             0.671
+ws_gpqa                       150                 109              1.000             0.691
+ws_math_primary                16                   9              1.000             0.683
+ws_medxpertqa                  24                  16              1.000             0.680
+ws_mmlupro                    129                  92              1.000             0.658
+ws_scibench                   133                 100              1.000             0.645
+ws_scicode                    107                  73              1.000             0.665

@@ -3,15 +3,20 @@ per-edit significance level (Bonferroni, 9 edits): 0.0056
 
 edit                acc   diff          95% CI  R->W  W->R       p   dlogp  same  verdict
 -----------------------------------------------------------------------------------------
-ctrl_random        24.6   -0.1    [-0.5, +0.3]     3     2  1.0000  -0.001  0.99  (control) no change (within +/-2)
-mit_p10c           24.4   -0.3    [-1.7, +1.0]    25    22  0.7709  +0.057  0.86  no change (within +/-2)
+ctrl_damage_noise05  24.8   +0.1    [-0.9, +1.1]    13    14  1.0000  +0.017  0.92  (control) no change (within +/-2)
+ctrl_damage_noise10  25.4   +0.7    [-0.7, +2.1]    23    30  0.4101  +0.031  0.83  (control) inconclusive
+ctrl_damage_noise20  24.7   +0.0    [-2.1, +2.1]    58    58  1.0000  +0.050  0.64  (control) inconclusive
+ctrl_damage_noise40  17.7   -7.0   [-10.4, -3.8]   176   106  0.0000  -0.115  0.16  (control) DAMAGE
+ctrl_damage_zero_attn15  12.4  -12.3   [-15.4, -9.2]   191    68  0.0000  -0.242  0.29  (control) DAMAGE
+ctrl_random        24.6   -0.1    [-0.6, +0.3]     3     2  1.0000  -0.001  0.99  (control) no change (within +/-2)
+mit_p10c           24.4   -0.3    [-1.6, +1.0]    25    22  0.7709  +0.057  0.86  no change (within +/-2)
 mit_p25c           25.0   +0.3    [-0.9, +1.5]    17    20  0.7428  -0.048  0.87  no change (within +/-2)
 mit_p50c           24.4   -0.3    [-1.1, +0.5]    10     7  0.6291  +0.023  0.95  no change (within +/-2)
-ws_gpqa            24.8   +0.1    [-1.1, +1.4]    20    21  1.0000  -0.010  0.85  no change (within +/-2)
+ws_gpqa            24.8   +0.1    [-1.1, +1.3]    20    21  1.0000  -0.010  0.85  no change (within +/-2)
 ws_math_primary    24.6   -0.1    [-0.6, +0.4]     4     3  1.0000  -0.005  0.98  no change (within +/-2)
-ws_medxpertqa      24.7   +0.0    [-0.6, +0.5]     4     4  1.0000  -0.002  0.98  no change (within +/-2)
+ws_medxpertqa      24.7   +0.0    [-0.5, +0.6]     4     4  1.0000  -0.002  0.98  no change (within +/-2)
 ws_mmlupro         25.0   +0.3    [-0.9, +1.5]    17    20  0.7428  -0.048  0.87  no change (within +/-2)
-ws_scibench        24.8   +0.1    [-1.0, +1.2]    16    17  1.0000  +0.026  0.87  no change (within +/-2)
+ws_scibench        24.8   +0.1    [-1.0, +1.3]    16    17  1.0000  +0.026  0.87  no change (within +/-2)
 ws_scicode         24.3   -0.4    [-1.6, +0.7]    19    15  0.6076  -0.012  0.89  no change (within +/-2)
 
 Largest per-category changes (points), edits only:
