@@ -1,0 +1,11 @@
+mit_p10c: 30 tensors, 72,986,982 values changed, sha256 OK
+mit_p25c: 1 tensors, 262,144 values changed, sha256 OK
+mit_p50c: 2 tensors, 130,188 values changed, sha256 OK
+ws_math_primary: 1 tensors, 1,023 values changed (matches paper)
+ws_gpqa: 1 tensors, 262,144 values changed (matches paper)
+ws_mmlupro: 1 tensors, 262,144 values changed (matches paper)
+ws_medxpertqa: 8 tensors, 21,504 values changed (matches paper)
+ws_scibench: 4 tensors, 787,456 values changed (matches paper)
+ws_scicode: 2 tensors, 263,168 values changed (matches paper)
+ctrl_random: 1 tensors, 1,024 values changed
+ws_mmlupro has the same values as mit_p25c: yes (two groups found the same edit)

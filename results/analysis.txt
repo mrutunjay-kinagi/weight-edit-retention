@@ -1,0 +1,28 @@
+questions: 1000   base accuracy: 24.7%   chance: 11.1%   base letter mass: 0.999
+per-edit significance level (Bonferroni, 9 edits): 0.0056
+
+edit                acc   diff          95% CI  R->W  W->R       p   dlogp  same  verdict
+-----------------------------------------------------------------------------------------
+ctrl_random        24.6   -0.1    [-0.5, +0.3]     3     2  1.0000  -0.001  0.99  (control) no change (within +/-2)
+mit_p10c           24.4   -0.3    [-1.7, +1.0]    25    22  0.7709  +0.057  0.86  no change (within +/-2)
+mit_p25c           25.0   +0.3    [-0.9, +1.5]    17    20  0.7428  -0.048  0.87  no change (within +/-2)
+mit_p50c           24.4   -0.3    [-1.1, +0.5]    10     7  0.6291  +0.023  0.95  no change (within +/-2)
+ws_gpqa            24.8   +0.1    [-1.1, +1.4]    20    21  1.0000  -0.010  0.85  no change (within +/-2)
+ws_math_primary    24.6   -0.1    [-0.6, +0.4]     4     3  1.0000  -0.005  0.98  no change (within +/-2)
+ws_medxpertqa      24.7   +0.0    [-0.6, +0.5]     4     4  1.0000  -0.002  0.98  no change (within +/-2)
+ws_mmlupro         25.0   +0.3    [-0.9, +1.5]    17    20  0.7428  -0.048  0.87  no change (within +/-2)
+ws_scibench        24.8   +0.1    [-1.0, +1.2]    16    17  1.0000  +0.026  0.87  no change (within +/-2)
+ws_scicode         24.3   -0.4    [-1.6, +0.7]    19    15  0.6076  -0.012  0.89  no change (within +/-2)
+
+Largest per-category changes (points), edits only:
+  mit_p10c          worst: health -4 (n=69), biology -4 (n=54) | best: math +3 (n=105), history +5 (n=37)
+  mit_p25c          worst: health -4 (n=69), philosophy -3 (n=33) | best: computer science +4 (n=45), history +5 (n=37)
+  mit_p50c          worst: other -3 (n=76), biology -2 (n=54) | best: math +1 (n=105), chemistry +4 (n=75)
+  ws_gpqa           worst: chemistry -4 (n=75), biology -4 (n=54) | best: economics +3 (n=72), computer science +4 (n=45)
+  ws_math_primary   worst: law -2 (n=95), chemistry -1 (n=75) | best: biology +2 (n=54), health +3 (n=69)
+  ws_medxpertqa     worst: law -2 (n=95), chemistry -1 (n=75) | best: biology +2 (n=54), computer science +4 (n=45)
+  ws_mmlupro        worst: health -4 (n=69), philosophy -3 (n=33) | best: computer science +4 (n=45), history +5 (n=37)
+  ws_scibench       worst: philosophy -6 (n=33), law -3 (n=95) | best: computer science +4 (n=45), history +5 (n=37)
+  ws_scicode        worst: law -3 (n=95), philosophy -3 (n=33) | best: computer science +2 (n=45), economics +3 (n=72)
+
+Per-category numbers have few questions each. Treat them as hints only.
