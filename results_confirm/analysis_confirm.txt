@@ -1,0 +1,43 @@
+questions: 2000   base accuracy: 25.9%   primary set (base p(correct) > 0.5): 182   mean p there: 0.733
+
+variant                    change in p(correct)        95% interval  kept correct  accuracy change
+ctrl_damage_noise05                      +0.000    [-0.002, +0.003]         1.000             +0.0
+ctrl_damage_noise10                      -0.008    [-0.014, -0.002]         1.000             +0.2
+ctrl_damage_noise20                      -0.059    [-0.073, -0.046]         0.973             -0.4
+ctrl_damage_noise40                      -0.339    [-0.366, -0.312]         0.725             -7.0
+ctrl_random                              -0.000    [-0.000, +0.000]         1.000             +0.1
+ctrl_damage_noise10_s1                   -0.021    [-0.027, -0.015]         1.000             -0.6
+ctrl_damage_noise20_s1                   -0.084    [-0.096, -0.072]         0.978             -1.9
+ctrl_damage_zero_attn15                  -0.547    [-0.569, -0.523]         0.319            -12.0
+mit_p10c                                 -0.112    [-0.119, -0.105]         1.000             -0.2
+mit_p25c                                 -0.028    [-0.034, -0.022]         1.000             +0.5
+mit_p50c                                 -0.012    [-0.014, -0.009]         1.000             -0.1
+ws_gpqa                                  +0.009    [+0.006, +0.013]         1.000             +0.7
+ws_math_primary                          -0.001    [-0.001, -0.001]         1.000             +0.0
+ws_medxpertqa                            -0.004    [-0.004, -0.003]         1.000             +0.1
+ws_scibench                              -0.034    [-0.038, -0.030]         1.000             +0.2
+ws_scicode                               -0.019    [-0.023, -0.016]         1.000             +0.4
+
+Pre-registered tests
+H1 calibration (drop grows with noise; 20% > 10% and 40% > 20% clearly): PASS   means +0.000, -0.008, -0.059, -0.339
+   mit_p10c minus ctrl_damage_noise10: -0.104 [-0.113, -0.094]
+   mit_p10c minus ctrl_damage_noise10_s1: -0.091 [-0.100, -0.082]
+H2 broad edit (mit_p10c lowers confidence more than 10% noise, both seeds): PASS
+   mit_p25c: drop -0.028, smaller than 20% noise on both seeds: yes
+   mit_p50c: drop -0.012, smaller than 20% noise on both seeds: yes
+   ws_gpqa: drop +0.009, smaller than 20% noise on both seeds: yes
+   ws_math_primary: drop -0.001, smaller than 20% noise on both seeds: yes
+   ws_medxpertqa: drop -0.004, smaller than 20% noise on both seeds: yes
+   ws_scibench: drop -0.034, smaller than 20% noise on both seeds: yes
+   ws_scicode: drop -0.019, smaller than 20% noise on both seeds: yes
+H3 other edits (each lowers confidence less than 20% noise): PASS
+
+Noise-equivalent size (descriptive): the noise level that gives the same drop
+   mit_p10c           23.8% noise
+   mit_p25c           13.9% noise
+   mit_p50c           10.7% noise
+   ws_gpqa             0.0% noise
+   ws_math_primary     5.9% noise
+   ws_medxpertqa       7.4% noise
+   ws_scibench        15.1% noise
+   ws_scicode         12.2% noise

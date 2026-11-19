@@ -3,10 +3,20 @@
 A loop-free test of whether published weight-space programming edits to
 Qwen3.5-0.8B reduce what the model knows.
 
-**Result so far:** none of the nine edits tested reduced MMLU-Pro accuracy beyond a band of
-plus or minus 2 points fixed before the run. A positive control showed that accuracy is a
-blunt measure here (20% random noise also passes), so a confirmatory run with a sharper,
-pre-registered measure is in progress.
+**Result.** On a loop-free test, no published edit made the model answer firmly known
+questions wrongly. Seven of the eight distinct edits cost less confidence than 20% random
+noise, and the narrowest cost almost nothing. The broadest edit (30 matrices) lowers
+confidence more than 20% random noise on the same matrices, uniformly across questions.
+Accuracy alone hides all of this: 20% random noise also passes the accuracy test.
+
+![Change in confidence for each edit and for the noise controls](figures/confidence_change.png)
+
+The work ran in three stages, each committed before the next:
+
+1. **First run** (1,000 questions): accuracy, with rules fixed in advance. No edit changed it.
+2. **Positive controls:** showed that accuracy detects large damage and misses moderate damage.
+3. **Confirmatory run** (2,000 fresh questions): a sharper measure, pre-registered in
+   `PREREGISTRATION_confirm.md`. All three hypotheses passed.
 
 Write-up: _add link_
 
@@ -85,7 +95,7 @@ the answers and leaves accuracy at 24.7%. So accuracy on this test detects large
 misses moderate damage. A sharper measure and a confirmatory run on fresh questions are
 specified in `PREREGISTRATION_confirm.md`.
 
-## Results
+## Results of the first run (accuracy)
 
 Base accuracy 24.7% (chance 11.1%). Probability mass on valid letters 0.999.
 
@@ -116,12 +126,55 @@ Full output: `results/analysis.txt`. Per-question files: `results/*.jsonl`.
 
 Run `python extra_checks.py` to reproduce these.
 
+## Confirmatory run (19 November 2026)
+
+2,000 MMLU-Pro questions not used in the first run. The pre-registration was committed
+during the run, before any result was seen (commit `cf0dc00`).
+
+**Primary set:** the 182 questions the base model answers correctly with probability above 0.5.
+**Primary measure:** mean change in the probability of the correct option on that set.
+
+| Variant | Change in p(correct) | 95% interval | Kept correct | Accuracy change (all 2,000) |
+|---|---|---|---|---|
+| Noise 5% | 0.000 | -0.002 to +0.003 | 100% | 0.0 |
+| Noise 10%, seed A | -0.008 | -0.014 to -0.002 | 100% | +0.2 |
+| Noise 10%, seed B | -0.021 | -0.027 to -0.015 | 100% | -0.6 |
+| Noise 20%, seed A | -0.059 | -0.073 to -0.046 | 97.3% | -0.4 |
+| Noise 20%, seed B | -0.084 | -0.096 to -0.072 | 97.8% | -1.9 |
+| Noise 40% | -0.339 | -0.366 to -0.312 | 72.5% | -7.0 |
+| Layer 15 attention zeroed | -0.547 | -0.569 to -0.523 | 31.9% | -12.0 |
+| Random direction control | 0.000 | 0.000 to 0.000 | 100% | +0.1 |
+| mit_p10c | -0.112 | -0.119 to -0.105 | 100% | -0.2 |
+| ws_scibench | -0.034 | -0.038 to -0.030 | 100% | +0.2 |
+| mit_p25c | -0.028 | -0.034 to -0.022 | 100% | +0.5 |
+| ws_scicode | -0.019 | -0.023 to -0.016 | 100% | +0.4 |
+| mit_p50c | -0.012 | -0.014 to -0.009 | 100% | -0.1 |
+| ws_medxpertqa | -0.004 | -0.004 to -0.003 | 100% | +0.1 |
+| ws_math_primary | -0.001 | -0.001 to -0.001 | 100% | 0.0 |
+| ws_gpqa | +0.009 | +0.006 to +0.013 | 100% | +0.7 |
+
+- **H1, calibration: pass.** The drop grows with the noise level.
+- **H2, the broad edit: pass.** `mit_p10c` lowers confidence more than 10% noise on both
+  seeds (differences -0.104 and -0.091, intervals excluding zero).
+- **H3, the other edits: pass.** Each lowers confidence less than 20% noise on both seeds.
+
+The values match the first run closely (`mit_p10c`: -0.110 then, -0.112 now).
+
+Not pre-registered, descriptive: `mit_p10c` also exceeds both 20% noise seeds. It lowers
+confidence on all 182 questions by a similar amount and flips none, while 20% noise lowers
+it on about 75% of them, unevenly, and flips a few. The edit itself is 4.8% of the norm of
+the weights it touches; random noise of 5% has no measurable effect.
+
+Full output: `results_confirm/analysis_confirm.txt`. Redraw the figure with `python make_figure.py`.
+
 ## Limits
 
 - With thinking off the base model scores 24.7%, against 40.3% with thinking on.
   This test sees only knowledge the model can state at once.
 - One model, one benchmark, one prompt format.
-- "No change" rules out a 2-point drop, not a half-point drop.
+- Lower confidence with thinking off may or may not mean more wrong answers when the
+  model samples with thinking on. That is not tested.
+- Noise results vary by seed, so comparisons to noise are rough.
 - Plasticity (can the edited model still be fine-tuned as well) is not tested.
 
 ## Reproduce
@@ -149,6 +202,8 @@ An 8 GB Apple laptop is too slow for this model's reference implementation.
 - `extra_checks.py`: the exploratory observations.
 - `PREREGISTRATION_confirm.md`, `analyze_confirm.py`, `confirm_colab.ipynb`: the confirmatory run.
 - `positive_control_colab.ipynb`: the positive-control run.
+- `results_confirm/`: per-question outputs of the confirmatory run.
+- `make_figure.py`, `figures/`: the chart above.
 - `mit_edits/`: edit files from the MIT group.
 - `results/`: per-question outputs from the run reported here (Colab T4, 17 November 2026).
 
