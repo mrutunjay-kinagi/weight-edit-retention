@@ -18,7 +18,7 @@ The work ran in three stages, each committed before the next:
 3. **Confirmatory run** (2,000 fresh questions): a sharper measure, pre-registered in
    `PREREGISTRATION_confirm.md`. All three hypotheses passed.
 
-Write-up: _add link_
+Write-up: [Do weight edits cost knowledge?](https://medium.com/@mrutunjay.kinagi/do-weight-edits-cost-knowledge-1cdaffe34523)
 
 ## Background
 
